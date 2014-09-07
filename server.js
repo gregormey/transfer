@@ -3,6 +3,7 @@ var express = require('express')
 , swig = require('swig')
 , http = require('http')
 , formidable = require('formidable')
+, util = require('util')
 , fs = require('fs')
 , app = express();
 
@@ -20,34 +21,37 @@ app.get('/upload', function(req,res){
 
 
 app.post('/upload', function(req, res) {
-    var form = new formidable.IncomingForm();
-    form.parse(req, function(err, fields, files) {
-        // `file` is the name of the <input> field of type `file`
-        var old_path = files.file.path,
-            file_size = files.file.size,
-            file_ext = files.file.name.split('.').pop(),
-            index = old_path.lastIndexOf('/') + 1,
-            file_name = old_path.substr(index),
-            new_path = __dirname + '/uploads/'+ file_name + '.' + file_ext;
- 
-        fs.readFile(old_path, function(err, data) {
-            fs.writeFile(new_path, data, function(err) {
-                fs.unlink(old_path, function(err) {
-                    if (err) {
-                        res.status(500);
-                        res.render('upload',
-                            { "error":true}
-                        );
-                    } else {
-                        res.status(200);
-                        res.render('upload',
-                            { "success":true}
-                        );
-                    }
-                });
-            });
-        });
-    });
+    var form = new formidable.IncomingForm(),
+        files = [],
+        fields = [];
+
+    form.uploadDir = __dirname + '/uploads';
+
+    form
+      .on('field', function(field, value) {
+        console.log(field, value);
+        fields.push([field, value]);
+      })
+      .on('file', function(field, file) {
+        console.log(field, file);
+        files.push([field, file]);
+        if(file.name!=""){
+          fs.rename(file.path, form.uploadDir + "/" + file.name);
+        }else
+        {
+           res.render('upload',{"error":true,"msg":"No file selected"});
+        }
+      })
+      .on('error', function(err) {
+        console.log('-> error while upload');
+        console.log(util.inspect(err));
+        res.render('upload',{"error":true,"msg":"Error while upload"});
+      })
+      .on('end', function() {
+        console.log('-> upload done');
+        res.render('upload',{"success":true,"msg":"Upload successful"});
+      });
+    form.parse(req);
 });
 
 

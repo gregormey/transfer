@@ -22,11 +22,11 @@
       <div class="jumbotron">
         <h1>File Upload</h1>
         {% if success %}
-          <div class="alert alert-success" role="alert">Upload successful</div>
+          <div class="alert alert-success" role="alert">{{ msg }}</div>
         {% endif %}
 
         {% if error %}
-          <div class="alert alert-danger" role="alert">Error while upload</div>
+          <div class="alert alert-danger" role="alert">{{ msg }}</div>
         {% endif %}
         
         <p>
