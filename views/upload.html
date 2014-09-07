@@ -21,14 +21,25 @@
       <!-- Main component for a primary marketing message or call to action -->
       <div class="jumbotron">
         <h1>File Upload</h1>
+        {% if success %}
+          <div class="alert alert-success" role="alert">Upload successful</div>
+        {% endif %}
+
+        {% if error %}
+          <div class="alert alert-danger" role="alert">Error while upload</div>
+        {% endif %}
         
         <p>
+           <form action="/upload" enctype="multipart/form-data" method="post">
           <div class="fileinput fileinput-new" data-provides="fileinput">
-            <span class="btn btn-lg btn-primary btn-file"><span class="fileinput-new">Select file</span><span class="fileinput-exists">Change</span><input type="file" name="..."></span>
+            <span class="btn btn-lg btn-default btn-file"><span class="fileinput-new">Select file</span><span class="fileinput-exists">Change</span><input type="file" name="file"></span>
             <span class="fileinput-filename"></span>
             <a href="#" class="close fileinput-exists" data-dismiss="fileinput" style="float: none">&times;</a>
           </div>
+          <input type='submit' value='Start Upload' class='btn btn-lg btn-primary'/>
+        </form>
         </p>
+
       </div>
 
     </div>
