@@ -15,6 +15,12 @@ app.engine('html', swig.renderFile);
 app.set('view engine', 'html');
 app.set('views', __dirname + '/views');
 
+//GET public assets
+app.use(express.static(__dirname + '/public'));
+
+
+//routes
+
 app.get('/upload', function(req,res){
   res.render('upload');
 });
